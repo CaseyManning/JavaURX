@@ -19,10 +19,11 @@ public class Arm {
 	}
 	
 	public void moveJDegrees(double[] jointPositions, double a, double v) {
+		double[] radians = new double[jointPositions.length];
 		for(int i = 0; i < jointPositions.length; i++) {
-			jointPositions[i] = Math.toRadians(jointPositions[i]);
+			radians[i] = Math.toRadians(jointPositions[i]);
 		}
-		String message = "movej(" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)\n";
+		String message = "movej(" + Arrays.toString(radians) + ", a="+a+", v="+v+", r=0)\n";
 		net.send(message);
 	}
 	

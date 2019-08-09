@@ -34,7 +34,7 @@ public class ExampleProgram {
 				e.printStackTrace();
 			}
 		}
-		
+
 //		arm.moveJDegrees(waypoint2, 5, 5);
 		
 //		System.out.println("Finishing");
