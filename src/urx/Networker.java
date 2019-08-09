@@ -32,6 +32,7 @@ public class Networker {
 	
 	public void send(String message) {
 		try {
+			out.write(message.getBytes());
 			out.writeUTF(message);
 			out.flush();
 			System.out.println("Sending message: " + message);
