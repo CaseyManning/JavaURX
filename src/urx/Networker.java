@@ -14,10 +14,10 @@ public class Networker {
 	int port = 30002;
 	BufferedReader in;
 	DataOutputStream out;
+	Socket socket;
 
 	public Networker(String ip) {
 		this.ip = ip;
-        Socket socket;
 		try {
 			socket = new Socket(ip, port);
 			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -53,16 +53,17 @@ public class Networker {
 		
 		@Override
 		public void run() {
+			System.out.println("Starting Reciever Thread");
 			while(true) {
 				try {
-					String recieved = in.readLine();
+					var recieved = socket.getInputStream().readAllBytes();
+//					String recieved = in.readLine();
 					System.out.println(recieved);
+					System.out.println('a');
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				
 			}
 		}
-		
 	}
 }
