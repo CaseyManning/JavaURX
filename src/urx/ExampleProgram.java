@@ -19,12 +19,12 @@ public class ExampleProgram {
 		
 		Arm arm = new Arm(arm_ip);
 		
-		arm.moveJointAbsolute(waypoint1, 1, 1);
+		arm.moveJDegrees(waypoint1, 1, 1);
 		
-		arm.moveJointAbsolute(waypoint2, 5, 5);
+		arm.moveJDegrees(waypoint2, 5, 5);
 		
 		System.out.println("Finishing");
 		
-		arm.moveLinear(relativeMove1, 1, 1);
+		arm.moveL(relativeMove1, 1, 1);
 	}
 }
