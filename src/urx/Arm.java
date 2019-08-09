@@ -14,7 +14,7 @@ public class Arm {
 	 * @param v The velocity of the arm movement 
 	 */
 	public void moveJoint(double[] jointPositions, double a, double v) {
-		String message = "Program({movej" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+")})";
+		String message = "Program({movej" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)})";
 		net.send(message);
 	}
 	
