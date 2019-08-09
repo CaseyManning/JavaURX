@@ -13,8 +13,8 @@ public class Arm {
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
-	public void moveJoint(double[] jointPositions, double a, double v) {
-		String message = "Program({movej" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)})";
+	public void moveJointAbsolute(double[] jointPositions, double a, double v) {
+		String message = "movej(" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)\n";
 		net.send(message);
 	}
 	
@@ -24,8 +24,8 @@ public class Arm {
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
-	public void moveRelative(double[] movement, double a, double v) {
-		String message = "Program({" + Arrays.toString(movement) + ", a="+a+", v="+v+")})";
+	public void moveLinear(double[] movement, double a, double v) {
+		String message = "movel(" + Arrays.toString(movement) + ", a="+a+", v="+v+"))";
 		net.send(message);
 	}
 }
