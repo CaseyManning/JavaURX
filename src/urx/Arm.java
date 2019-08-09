@@ -1,4 +1,5 @@
 package urx;
+import java.util.Arrays;
 
 public class Arm {
 	
@@ -13,7 +14,7 @@ public class Arm {
 	 * @param v The velocity of the arm movement 
 	 */
 	public void moveJoint(double[] jointPositions, double a, double v) {
-		String message = "Program({movej" + jointPositions.toString() + ", a="+a+", v="+v+")})";
+		String message = "Program({movej" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+")})";
 		net.send(message);
 	}
 	
@@ -24,7 +25,7 @@ public class Arm {
 	 * @param v The velocity of the arm movement 
 	 */
 	public void moveRelative(double[] movement, double a, double v) {
-		String message = "Program({" + movement.toString() + "})";
+		String message = "Program({" + Arrays.toString(movement) + ", a="+a+", v="+v+")})";
 		net.send(message);
 	}
 }

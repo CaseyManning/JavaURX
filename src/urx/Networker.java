@@ -19,6 +19,7 @@ public class Networker {
 			socket = new Socket(ip, port);
 			in = socket.getInputStream();
 			out = new DataOutputStream(socket.getOutputStream());
+			System.out.println("Created Socket");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -26,8 +27,9 @@ public class Networker {
 	
 	public void send(String message){
 		try {
-		out.writeUTF(message);
-		out.flush();
+			out.writeUTF(message);
+			out.flush();
+			System.out.println("Sending message: " + message);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

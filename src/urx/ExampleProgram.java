@@ -1,7 +1,6 @@
 package urx;
 
 public class ExampleProgram {
-
 	
 	// Specifies joint positions of base, shoulder, 
 	// elbow, wrist1, wrist2, wrist3, respectively
@@ -16,11 +15,15 @@ public class ExampleProgram {
 	
 	public static void main(String[] args) {
 		
+		System.out.println("Starting");
+		
 		Arm arm = new Arm(arm_ip);
 		
 		arm.moveJoint(waypoint1, 1, 1);
 		
 		arm.moveJoint(waypoint2, 5, 5);
+		
+		System.out.println("Finishing");
 		
 		//
 //		arm.moveRelative(relativeMove1, 1, 1);
