@@ -4,8 +4,8 @@ public class ExampleProgram {
 	
 	// Specifies joint positions of base, shoulder, 
 	// elbow, wrist1, wrist2, wrist3, respectively
-	static double[] waypoint1 = {60, 30, 30, 35, 50, 100};
-	static double[] waypoint2 = {30, 30, 50, 70, 50, 80};
+	static double[] waypoint1 = {94.14, -121.48, 101.14, -69.44, -90.36, 0};
+	static double[] waypoint2 = {80, -120, 80, -69.44, -90.36, 0};
 	
 	//Relative cardinal movement, takes dx, dy, dx, rx, ry, rz
 	// This moves the robot 10 centimeters forwards on +y
@@ -19,12 +19,26 @@ public class ExampleProgram {
 		
 		Arm arm = new Arm(arm_ip);
 		
-		arm.moveJointAbsolute(waypoint1, 1, 1);
 		
-		arm.moveJointAbsolute(waypoint2, 5, 5);
+		while(true) {
+			arm.moveJDegrees(waypoint1, 1, 1);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			arm.moveJDegrees(waypoint2, 1, 1);
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		
-		System.out.println("Finishing");
+//		arm.moveJDegrees(waypoint2, 5, 5);
 		
-		arm.moveLinear(relativeMove1, 1, 1);
+//		System.out.println("Finishing");
+//		
+//		arm.moveL(relativeMove1, 1, 1);
 	}
 }

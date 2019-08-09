@@ -13,7 +13,15 @@ public class Arm {
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
-	public void moveJointAbsolute(double[] jointPositions, double a, double v) {
+	public void moveJ(double[] jointPositions, double a, double v) {
+		String message = "movej(" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)\n";
+		net.send(message);
+	}
+	
+	public void moveJDegrees(double[] jointPositions, double a, double v) {
+		for(int i = 0; i < jointPositions.length; i++) {
+			jointPositions[i] = Math.toRadians(jointPositions[i]);
+		}
 		String message = "movej(" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)\n";
 		net.send(message);
 	}
@@ -24,8 +32,12 @@ public class Arm {
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
-	public void moveLinear(double[] movement, double a, double v) {
-		String message = "movel(" + Arrays.toString(movement) + ", a="+a+", v="+v+"))";
+	public void moveL(double[] movement, double a, double v) {
+		String message = "movel(" + Arrays.toString(movement) + ", a="+a+", v="+v+")\n";
 		net.send(message);
+	}
+	
+	public void moveLRelative(double[] movement, double a, double v) {
+		throw new UnsupportedOperationException();
 	}
 }
