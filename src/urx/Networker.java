@@ -5,9 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
 import java.util.Arrays;
 
 public class Networker {
@@ -44,83 +46,26 @@ public class Networker {
 	
 	class Reciever extends Thread {
 		
-		public String readAll(InputStream in) throws IOException {
-		    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-		    StringBuilder sb = new StringBuilder();
-		    String line;
-		    while ((line = reader.readLine()) != null)
-		        sb.append(line).append("\n");
-		    return sb.toString();
-		}
-		
 		@Override
 		public void run() {
 			System.out.println("Starting Reciever Thread");
 			try {
-				var recieved = socket.getInputStream().readNBytes(1386);
+				byte[] recieved = socket.getInputStream().readNBytes(1386);
 				while(true) {
 					recieved = socket.getInputStream().readNBytes(715);
-					ByteBuffer b = ByteBuffer.wrap(recieved);
-					String[] aa = unpack("!IB6d".toCharArray(), recieved);
+					ByteBuffer bb = ByteBuffer.wrap(recieved);
 
-					System.out.println(recieved);
-				    String s = Arrays.toString(recieved);
-				    System.out.println(Arrays.toString(aa));
+					System.out.println("————————————————————————————————————");
+					Struct struct = new Struct();
+
+				    String ss = Arrays.toString(recieved);
+				    
+				    System.out.println(ss);
+
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		
-	    public String[] unpack(char[] packet, byte[] raw){
-	        String[] result = new String[packet.length];
-
-	        int pos = 0;
-	        int Strindex = 0;
-
-	        for (int x = 0; x < packet.length; x++){
-
-	            char type = packet[x];
-	            if (type == 'x'){
-	                pos += 1;
-	                continue;
-	            }
-	            else if (type == 'c'){
-	                char c = (char) (raw[pos] & 0xFF);
-	                result[Strindex] = Character.toString(c);
-	                Strindex += 1;
-	                pos += 1;
-	            }
-	            else if (type == 'h'){
-	                ByteBuffer bb = ByteBuffer.allocate(2);
-	                bb.order(ByteOrder.LITTLE_ENDIAN);
-	                bb.put(raw[pos]);
-	                bb.put(raw[pos+1]);
-	                short shortVal = bb.getShort(0);
-	                result[Strindex] = Short.toString(shortVal);
-	                pos += 2;
-	                Strindex += 1;
-	            }
-	            else if (type == 's'){
-	                String s = "";
-
-	                while (raw[pos] != (byte)0x00){
-	                    char c = (char) (raw[pos] & 0xFF);
-	                    s += Character.toString(c);
-	                    pos += 1;
-	                }
-	                result[Strindex] = s;
-	                Strindex += 1;
-	                pos += 1;
-	            }
-	            else if (type == 'b'){
-	                Byte p = raw[pos];
-	                result[Strindex] = Integer.toString(p.intValue());
-	                Strindex += 1;
-	                pos += 1;
-	            }
-	        }
-	        return result;
-	    }
 	}
 }
