@@ -33,7 +33,6 @@ public class ExampleProgram {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			
 		}
 		
 //		arm.moveJDegrees(waypoint2, 5, 5);
