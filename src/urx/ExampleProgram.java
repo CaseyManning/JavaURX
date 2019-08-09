@@ -27,12 +27,14 @@ public class ExampleProgram {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			System.out.println("———————————————————————————");
 			arm.moveJDegrees(waypoint2, 1, 1);
 			try {
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			System.out.println("———————————————————————————");
 		}
 
 //		arm.moveJDegrees(waypoint2, 5, 5);
