@@ -12,6 +12,7 @@ import java.nio.ByteOrder;
 import java.nio.DoubleBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 public class Networker {
@@ -21,6 +22,8 @@ public class Networker {
 	BufferedReader in;
 	DataOutputStream out;
 	Socket socket;
+	
+	HashMap<String, double[]> allData = new HashMap<String, double[]>(); 
 
 	public Networker(String ip) {
 		this.ip = ip;
@@ -133,14 +136,13 @@ public class Networker {
 						for(int j = 0; j < unpacked.length; j++) {
 							cartesian[j] = (Double) unpacked[j];
 						}
+						allData.put("joints", cartesian);
 					} catch(Exception e) {
-						
+						e.printStackTrace();
 					}
 				}else if(packetType == 1) {
-					System.out.println("test");
 					Struct struct = new Struct();
 					try {
-						System.out.println("test2");
 						Object[] unpacked = struct.unpack("!dddffffBdddffffBdddffffBdddffffBdddffffBdddffffB", subpacket);
 //						System.out.println(Arrays.deepToString(unpacked));
 						double[] jointAngles = new double[6];
@@ -150,6 +152,7 @@ public class Networker {
 							}
 						}
 						System.out.println(Arrays.toString(jointAngles));
+						allData.put("joints", jointAngles);
 						
 					} catch(Exception e) {
 						e.printStackTrace();
