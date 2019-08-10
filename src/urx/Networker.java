@@ -121,9 +121,24 @@ public class Networker {
 				long subPacketSize = Long.parseLong(lengthHex,16);
 				System.out.println("Got Subpacket of size " + subPacketSize);
 				int packetType = bigPacket[i + 4];
-				byte[] packet = Arrays.copyOfRange(bigPacket, i + 5, i + (int) subPacketSize);;
+				byte[] subpacket = Arrays.copyOfRange(bigPacket, i + 5, i + (int) subPacketSize);;
 				
 				//TODO: Deal with the subpacket
+				
+				if(packetType == 4) {
+					Struct struct = new Struct();
+					try {
+						Object[] unpacked = struct.unpack("dddddddddddd", subpacket);
+						double[] cartesian = new double[12];
+						for(int j = 0; j < unpacked.length; j++) {
+							cartesian[j] = (Double) unpacked[j];
+						}
+						
+					} catch(Exception e) {
+						
+					}
+				}
+				
 				i += subPacketSize;
 				System.out.println("i: " + i);
 				if(i >= bigPacket.length) {
