@@ -91,14 +91,11 @@ public class Networker {
 						String hex2 = bytesToHex(asdfa);
 						int packetType = Integer.parseInt(hex2,16);
 						if(packetType == 16) {
-							System.out.println("AAIUSHDIUASHIFASIUFHAIUSHFIUASHFIUASHFAUIHFASUHFIu");
-							currentPacket = socket.getInputStream().readNBytes((int) packetSize);
+							System.out.println("Got a new packet");
+							currentPacket = socket.getInputStream().readNBytes((int) packetSize - 5);
 
-							ArrayList<byte[]> subPackets = getSubpackets(currentPacket);
-							
-							for(byte[] subPacket : subPackets) {
-								//TODO: Billy
-							}
+							parsePacket(currentPacket);
+
 						}
 						
 					} else {
@@ -115,22 +112,24 @@ public class Networker {
 			}
 		}
 		
-		public ArrayList<byte[]> getSubpackets(byte[] bigPacket) {
+		public void parsePacket(byte[] bigPacket) {
+			System.out.println(bigPacket.length);
 			int i = 0;
-			ArrayList<byte[]> subPackets = new ArrayList<byte[]>();
 			while(true) {
 				Byte[] lengthBytes = {bigPacket[i], bigPacket[i+1], bigPacket[i+2], bigPacket[i+3]};
 				String lengthHex = bytesToHex(lengthBytes);
 				long subPacketSize = Long.parseLong(lengthHex,16);
-				byte[] packet = Arrays.copyOfRange(bigPacket, i + 5, i + 5 + (int) subPacketSize);;
-				subPackets.add(packet);
-				i += subPacketSize + 5;
+				System.out.println("Got Subpacket of size " + subPacketSize);
+				int packetType = bigPacket[i + 4];
+				byte[] packet = Arrays.copyOfRange(bigPacket, i + 5, i + (int) subPacketSize);;
+				
+				//TODO: Deal with the subpacket
+				i += subPacketSize;
+				System.out.println("i: " + i);
 				if(i >= bigPacket.length) {
 					break;
 				}
-			}
-			return subPackets;
-			
+			}			
 		}
 	}
 }
