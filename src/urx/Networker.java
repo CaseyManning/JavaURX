@@ -128,13 +128,11 @@ public class Networker {
 				if(packetType == 4) {
 					Struct struct = new Struct();
 					try {
-						Object[] unpacked = struct.unpack("dddddddddddd", subpacket);
+						Object[] unpacked = struct.unpack("!dddddddddddd", subpacket);
 						double[] cartesian = new double[12];
 						for(int j = 0; j < unpacked.length; j++) {
 							cartesian[j] = (Double) unpacked[j];
 						}
-//						System.out.println(Arrays.toString(cartesian));
-						
 					} catch(Exception e) {
 						
 					}
