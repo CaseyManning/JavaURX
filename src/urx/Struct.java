@@ -13,8 +13,10 @@ package urx;
  */
 
 import java.io.ByteArrayInputStream;
+import java.nio.ByteBuffer;
 import java.io.ByteArrayOutputStream;
 import java.lang.*;
+import java.math.BigInteger;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
@@ -158,7 +160,7 @@ public class Struct {
             case 'I':
                 bx = packRaw_u32b(val);
                 break;
-
+                
             default:
                 //do nothing
                 System.out.println("Invalid format specifier");
@@ -251,7 +253,6 @@ public class Struct {
         return bxx;
     }
 
-
     private long unpackRaw_16b(byte[] val){
         if(byteOrder==LittleEndian)
             reverseBytes(val);
@@ -286,7 +287,7 @@ public class Struct {
         }
         return x;
     }
-
+    
     private long unpackRaw_u32b(byte[] val){
         if(byteOrder==LittleEndian)
             reverseBytes(val);
@@ -295,8 +296,27 @@ public class Struct {
         x = ( ((long)(val[0] & 0xff))<<24) | (((long) (val[1] & 0xff))<<16) | ( ((long)(val[2]&0xff))<<8) | ((long)(val[3] & 0xff));
         return x;
     }
-    public long unpack_single_data(char fmt, byte[] val) throws Exception{
-        long var = 0;
+    
+    private float unpackRaw_float(byte[] val) {
+    	if(byteOrder==LittleEndian)
+            reverseBytes(val);
+    	return ByteBuffer.wrap(val).getFloat();
+    }
+    
+    private double unpackRaw_double(byte[] val){
+        if(byteOrder==LittleEndian)
+            reverseBytes(val);
+        return ByteBuffer.wrap(val).getDouble();
+    }
+    
+    private BigInteger unpackRaw_longlong(byte[] val) {
+    	if(byteOrder==LittleEndian)
+            reverseBytes(val);
+    	return new BigInteger(val);
+    }
+
+    public Object unpack_single_data(char fmt, byte[] val) throws Exception{
+        Object var = 0;
         switch (fmt){
             case 'h':
                 if(val.length!=2)
@@ -315,7 +335,7 @@ public class Struct {
                 if (val.length!=4)
                     throw new Exception("Byte length mismatch");
 
-                var = unpackRaw_32b( val);
+                var = unpackRaw_32b(val);
                 break;
 
             case 'I':
@@ -323,7 +343,43 @@ public class Struct {
                     throw new Exception("Byte length mismatch");
                 var = unpackRaw_u32b(val);
                 break;
+                
+            case 'B':
+            	if(val.length!=1)
+            		throw new Exception("Byte length mismatch");
+            	var = (char)val[0];
+            	break;
+            	
+            case 'd':
+            	if (val.length!=8)
+            		throw new Exception("Byte length mismatch");
+            	var = unpackRaw_double(val);
+            	break;
+            	
+            case '?':
+            	if (val.length!=1)
+            		throw new Exception("Byte length mismatch");
+            	var = val[0] == 1;
+            	break;
+            	
+            case 'f':
+            	if (val.length!=4)
+            		throw new Exception("Byte length mismatch");
+            	var = unpackRaw_float(val);
+            	break;
 
+            case 'Q':
+            	if (val.length!=8)
+            		throw new Exception("Byte length mismatch");
+            	var = unpackRaw_longlong(val);
+            	break;
+            	
+            case 'c':
+            	if (val.length!=1)
+            		throw new Exception("Byte length mismatch");
+            	var = (char)val[0];
+            	break;
+            	
             default:
                 // do nothing;
                 break;
@@ -339,15 +395,19 @@ public class Struct {
         char x = '\0';
         for(int i =0; i<fmt.length(); i++) {
             x = fmt.charAt(i);
-            if (x=='i' || x=='I')
+            if (x=='i' || x=='I' || x=='f')
                 counter+=4;
             else if (x=='h' || x=='H')
                 counter+=2;
+            else if (x=='B' || x=='?' || x=='c')
+            	counter+=1;
+            else if (x=='d' || x=='Q')
+            	counter+=8;
         }
         return counter;
     }
 
-    public long[] unpack(String fmt, byte[] vals) throws Exception{
+    public Object[] unpack(String fmt, byte[] vals) throws Exception{
         int len;
         len = lenEst(fmt);
 
@@ -356,16 +416,18 @@ public class Struct {
 
         char c0 = fmt.charAt(0);
 
-        long[] bxx;
+        Object[] bxx;
         if (c0=='@' || c0 == '<' || c0 == '>' || c0 == '!') {
-            bxx = new long[fmt.length() - 1];
+            bxx = new Object[fmt.length() - 1];
         }
         else{
-            bxx = new long[fmt.length()];
+            bxx = new Object[fmt.length()];
         }
         char c;
         byte[] bShort = new byte[2];
+        byte[] bByte = new byte[1];
         byte[] bLong = new byte[4];
+        byte[] bDouble = new byte[8];
         ByteArrayInputStream bs = new ByteArrayInputStream(vals);
 
         int p = 0;
@@ -384,12 +446,36 @@ public class Struct {
             else {
                 if ((c != '>') && (c != '<') && (c != '@') && (c != '!')) {
                     if (c == 'h' || c == 'H') {
-                        int read = bs.read(bShort);
+                        bs.read(bShort);
                         bxx[p] = unpack_single_data(c, bShort);
                     }
                     else if(c == 'i' || c =='I'){
-                        int read = bs.read(bLong);
+                        bs.read(bLong); //TODO: may need to convert to int afterward?
                         bxx[p] = unpack_single_data(c, bLong);
+                    }
+                    else if(c == 'B') {
+                    	bs.read(bByte);
+                    	bxx[p] = unpack_single_data(c, bByte);
+                    }
+                    else if(c== 'd') {
+                    	bs.read(bDouble);
+                    	bxx[p] = unpack_single_data(c, bDouble);
+                    }
+                    else if(c == '?') {
+                    	bs.read(bByte);
+                    	bxx[p] = unpack_single_data(c, bByte);
+                    }
+                    else if(c == 'f') {
+                    	bs.read(bLong);
+                    	bxx[p] = unpack_single_data(c, bLong);
+                    }
+                    else if(c == 'Q') {
+                    	bs.read(bDouble);
+                    	bxx[p] = unpack_single_data(c, bDouble);
+                    }
+                    else if(c == 'c') {
+                    	bs.read(bByte);
+                    	bxx[p] = unpack_single_data(c, bByte);
                     }
                     p++;
                 }
