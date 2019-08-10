@@ -9,7 +9,7 @@ public class Arm {
 		net = new Networker(ip);
 	}
 	/**
-	 * @param movement Specifies the joint angles of the movement to perform
+	 * @param movement Specifies the joint angles (in radians) of the movement to perform
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
@@ -17,7 +17,11 @@ public class Arm {
 		String message = "movej(" + Arrays.toString(jointPositions) + ", a="+a+", v="+v+", r=0)\n";
 		net.send(message);
 	}
-	
+	/**
+	 * @param movement Specifies the joint angles (in degrees) of the movement to perform
+	 * @param a The acceleration of the arm movement
+	 * @param v The velocity of the arm movement 
+	 */
 	public void moveJDegrees(double[] jointPositions, double a, double v) {
 		double[] radians = new double[jointPositions.length];
 		for(int i = 0; i < jointPositions.length; i++) {
@@ -27,9 +31,8 @@ public class Arm {
 		net.send(message);
 	}
 	
-	
 	/**
-	 * @param movement Specifies the relative movement to perform in
+	 * @param movement Specifies the cartesian coordinates of the desired arm position (from the base of the arm)
 	 * @param a The acceleration of the arm movement
 	 * @param v The velocity of the arm movement 
 	 */
@@ -38,11 +41,36 @@ public class Arm {
 		net.send(message);
 	}
 	
+	/**
+	 * @param movement Specifies the cartesian coordinates of the desired arm position (relative to the current arm position)
+	 * @param a The acceleration of the arm movement
+	 * @param v The velocity of the arm movement 
+	 */
 	public void moveLRelative(double[] movement, double a, double v) {
-		throw new UnsupportedOperationException();
+		double[] realMove = new double[6];
+		double[] joints = getArmCartesian();
+		for(int i = 0; i < movement.length; i++) {
+			realMove[i] = movement[i] - joints[i];
+		}
+		String message = "movel(" + Arrays.toString(realMove) + ", a="+a+", v="+v+")\n";
+		net.send(message);
+	}
+	/**
+	 * @param movement Specifies the angle (in radians) of a relative movement of the arms joints
+	 * @param a The acceleration of the arm movement
+	 * @param v The velocity of the arm movement 
+	 */
+	public void moveJRelative(double[] movement, double a, double v) {
+		double[] realMove = new double[6];
+		double[] joints = getArmJoints();
+		for(int i = 0; i < movement.length; i++) {
+			realMove[i] = movement[i] - joints[i];
+		}
+		String message = "movel(" + Arrays.toString(realMove) + ", a="+a+", v="+v+")\n";
+		net.send(message);
 	}
 	
-	public double[] getJointPositions() {
+	public double[] getArmJoints() {
 		return net.allData.get("joints");
 	}
 	
