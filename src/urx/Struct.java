@@ -28,7 +28,7 @@ public class Struct {
     private short byteOrder;
     private short nativeByteOrder;
 
-    Struct(){
+    public Struct(){
         ByteOrder x = ByteOrder.nativeOrder();
         if( x == ByteOrder.LITTLE_ENDIAN)
             nativeByteOrder = LittleEndian;

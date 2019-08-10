@@ -119,7 +119,7 @@ public class Networker {
 				Byte[] lengthBytes = {bigPacket[i], bigPacket[i+1], bigPacket[i+2], bigPacket[i+3]};
 				String lengthHex = bytesToHex(lengthBytes);
 				long subPacketSize = Long.parseLong(lengthHex,16);
-				System.out.println("Got Subpacket of size " + subPacketSize);
+//				System.out.println("Got Subpacket of size " + subPacketSize);
 				int packetType = bigPacket[i + 4];
 				byte[] subpacket = Arrays.copyOfRange(bigPacket, i + 5, i + (int) subPacketSize);;
 				
@@ -133,14 +133,33 @@ public class Networker {
 						for(int j = 0; j < unpacked.length; j++) {
 							cartesian[j] = (Double) unpacked[j];
 						}
+//						System.out.println(Arrays.toString(cartesian));
 						
 					} catch(Exception e) {
 						
 					}
+				}else if(packetType == 1) {
+					System.out.println("test");
+					Struct struct = new Struct();
+					try {
+						System.out.println("test2");
+						Object[] unpacked = struct.unpack("!dddffffBdddffffBdddffffBdddffffBdddffffBdddffffB", subpacket);
+//						System.out.println(Arrays.deepToString(unpacked));
+						double[] jointAngles = new double[6];
+						for(int j = 0; j < unpacked.length; j++) {
+							if (j%8 == 0) {
+								jointAngles[j/8] = (Double) unpacked[j];
+							}
+						}
+						System.out.println(Arrays.toString(jointAngles));
+						
+					} catch(Exception e) {
+						e.printStackTrace();
+					}
 				}
 				
 				i += subPacketSize;
-				System.out.println("i: " + i);
+//				System.out.println("i: " + i);
 				if(i >= bigPacket.length) {
 					break;
 				}
