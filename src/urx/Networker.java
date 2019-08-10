@@ -48,6 +48,8 @@ public class Networker {
 	
 	class Reciever extends Thread {
 		
+		byte[] currentPacket;
+		
 		private final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 		public String bytesToHex(Byte[] bytes) {
 		    char[] hexChars = new char[bytes.length * 2];
@@ -77,6 +79,7 @@ public class Networker {
 				
 				while(true) {
 					
+					// Finds the start of the packet based on the length and type
 					Byte[] bytes = new Byte[stored.size()];
 					bytes = stored.toArray(bytes);
 					String hex = bytesToHex(bytes);
@@ -87,17 +90,16 @@ public class Networker {
 						asdfa[0] = newByte;
 						String hex2 = bytesToHex(asdfa);
 						int packetType = Integer.parseInt(hex2,16);
-						System.out.println("Type: " + packetType);
-						System.out.println("Hex: " + hex + hex2);
-						System.out.println("Size:" + packetSize);
 						if(packetType == 16) {
 							System.out.println("AAIUSHDIUASHIFASIUFHAIUSHFIUASHFIUASHFAUIHFASUHFIu");
-							byte[] restOfPacket = socket.getInputStream().readNBytes((int) packetSize);
-							System.out.println(Arrays.toString(restOfPacket));
-							Thread.sleep(1000);
+							currentPacket = socket.getInputStream().readNBytes((int) packetSize);
+
+							ArrayList<byte[]> subPackets = getSubpackets(currentPacket);
+							
+							for(byte[] subPacket : subPackets) {
+								//TODO: Billy
+							}
 						}
-						
-						
 						
 					} else {
 						newByte = socket.getInputStream().readNBytes(1)[0];
@@ -111,6 +113,24 @@ public class Networker {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+		
+		public ArrayList<byte[]> getSubpackets(byte[] bigPacket) {
+			int i = 0;
+			ArrayList<byte[]> subPackets = new ArrayList<byte[]>();
+			while(true) {
+				Byte[] lengthBytes = {bigPacket[i], bigPacket[i+1], bigPacket[i+2], bigPacket[i+3]};
+				String lengthHex = bytesToHex(lengthBytes);
+				long subPacketSize = Long.parseLong(lengthHex,16);
+				byte[] packet = Arrays.copyOfRange(bigPacket, i + 5, i + 5 + (int) subPacketSize);;
+				subPackets.add(packet);
+				i += subPacketSize + 5;
+				if(i >= bigPacket.length) {
+					break;
+				}
+			}
+			return subPackets;
+			
 		}
 	}
 }
