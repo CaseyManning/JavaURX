@@ -41,4 +41,12 @@ public class Arm {
 	public void moveLRelative(double[] movement, double a, double v) {
 		throw new UnsupportedOperationException();
 	}
+	
+	public double[] getJointPositions() {
+		return net.allData.get("joints");
+	}
+	
+	public double[] getArmCartesian() {
+		return net.allData.get("cartesian");
+	}
 }

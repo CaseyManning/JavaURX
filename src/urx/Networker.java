@@ -136,7 +136,7 @@ public class Networker {
 						for(int j = 0; j < unpacked.length; j++) {
 							cartesian[j] = (Double) unpacked[j];
 						}
-						allData.put("joints", cartesian);
+						allData.put("cartesian", cartesian);
 					} catch(Exception e) {
 						e.printStackTrace();
 					}
